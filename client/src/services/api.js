@@ -106,18 +106,31 @@ export const categoryService = {
 export const authService = {
   // Register a new user
   register: async (userData) => {
-    const response = await api.post('/auth/register', userData);
-    return response.data;
+    console.log('Sending register request:', userData);
+    try {
+      const response = await api.post('/auth/register', userData);
+      console.log('Register response:', response.data);
+      return response.data;
+    } catch (err) {
+      console.error('Register error response:', err.response?.data || err.message);
+      throw err;
+    }
   },
 
   // Login user
   login: async (credentials) => {
-    const response = await api.post('/auth/login', credentials);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    console.log('Sending login request:', credentials);
+    try {
+      const response = await api.post('/auth/login', credentials);
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Login error response:', err.response?.data || err.message);
+      throw err;
     }
-    return response.data;
   },
 
   // Logout user

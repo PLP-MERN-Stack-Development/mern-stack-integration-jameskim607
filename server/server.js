@@ -14,6 +14,7 @@ const authRoutes = require('./routes/auth');
 
 // Load environment variables
 dotenv.config();
+console.log('MONGODB_URI present?', !!process.env.MONGODB_URI);
 
 // Initialize Express app
 const app = express();
@@ -45,14 +46,14 @@ app.get('/', (req, res) => {
   res.send('MERN Blog API is running');
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.statusCode || 500).json({
-    success: false,
-    error: err.message || 'Server Error',
-  });
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date() });
 });
+
+// Error handling middleware
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
 
 // Connect to MongoDB and start server
 mongoose
